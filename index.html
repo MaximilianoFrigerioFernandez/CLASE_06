@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Un fetch</title>
+        <style>
+            body {
+                font-family: Helvetica, Arial, sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Hola mundo</h1>
+
+        <h2>Reputación Empleadora (> 72)</h2>
+        <ol id="employ"></ol>
+
+        <h2>Reputación Académica (> 72)</h2>
+        <ol id="academic"></ol>
+
+        <script>
+            // 1) Referencias a los elementos del DOM
+            const uno = document.querySelector("#employ");
+            const otro = document.querySelector("#academic");
+
+            // 2) URL del endpoint
+            const URL = "https://api.myjson.online/v1/records/2830f59b-85bc-455d-9704-5a62103589b6";
+
+            // 3) Realizamos la petición HTTP
+            fetch(URL)
+                .then((respuesta) => {
+                    if (!respuesta.ok) {
+                        throw new Error("Error HTTP: " + respuesta.status);
+                    }
+                    return respuesta.json();
+                })
+                .then((datos) => {
+                    const qs = datos.data;
+                    console.log("Datos recibidos:", qs);
+
+                    // 4) Recorremos los datos corrigiendo el cierre de etiquetas </li> 
+                    // y verificando la ortografía de las propiedades del JSON
+                    qs.forEach((x) => {
+                        if (x.employer_reputation > 72 || x.employer_reputacion > 72) {
+                            uno.innerHTML += `<li>${x.name} - ${x.location}</li>`;
+                        }
+                        if (x.academic_reputation > 72 || x.academic_reputacion > 72) {
+                            otro.innerHTML += `<li>${x.name} - ${x.location}</li>`;
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error("Algo salió mal:", error);
+                });
+        </script>
+    </body>
+</html>
